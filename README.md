@@ -1,8 +1,8 @@
 # Reactjs Boilerplate
 
-Boilerplate frontend berbasis React + TypeScript + Vite, dengan Tailwind CSS v4 dan React Router.
+A frontend boilerplate built with React + TypeScript + Vite, including Tailwind CSS v4 and React Router.
 
-## Stack & Paket
+## Stack & Packages
 
 **Core**
 - `react`, `react-dom`
@@ -11,18 +11,18 @@ Boilerplate frontend berbasis React + TypeScript + Vite, dengan Tailwind CSS v4 
 **Styling**
 - `tailwindcss` (v4) + `@tailwindcss/vite`
 - `postcss`, `autoprefixer`
-- Utils className: `clsx`, `tailwind-merge`
-- Animasi util: `tw-animate-css`
+- className utilities: `clsx`, `tailwind-merge`
+- animation utility: `tw-animate-css`
 
 **Routing**
 - `react-router-dom`
 
 **UI**
-- `shadcn/ui` config via `components.json` (output komponen: `src/components/ui`)
+- `shadcn/ui` config via `components.json` (component output: `src/components/ui`)
 - `@radix-ui/react-slot` (Slot)
 - `class-variance-authority` (variants)
 
-**Animasi & Icon**
+**Animation & Icons**
 - `framer-motion`
 - `lucide-react`
 
@@ -30,34 +30,40 @@ Boilerplate frontend berbasis React + TypeScript + Vite, dengan Tailwind CSS v4 
 - `eslint` + `typescript-eslint`
 - `eslint-plugin-react-hooks`, `eslint-plugin-react-refresh`
 
-## Prasyarat
+## Prerequisites
 
-- Node.js (disarankan LTS)
+- Node.js (LTS recommended)
 - `pnpm`
 
-## Menjalankan
+## Run
 
 ```bash
 pnpm install
 pnpm dev
 ```
 
-Perintah lain:
+Other commands:
 
 ```bash
+pnpm type-check
 pnpm build
 pnpm preview
 pnpm lint
 ```
 
-## Struktur Folder
+## Folder Structure
 
-Berikut struktur utama project (ringkas, sesuai repo ini):
+Main project structure (condensed, based on this repository):
 
 ```text
 .
 ├─ docs/
-│  └─ API.MD
+│  ├─ api.md
+│  ├─ architecture.md
+│  ├─ coding-standards.md
+│  ├─ patterns.md
+│  ├─ rules.md
+│  └─ workflow.md
 ├─ providers/
 │  └─ index.ts
 ├─ public/
@@ -99,7 +105,7 @@ Berikut struktur utama project (ringkas, sesuai repo ini):
 │  │  │  └─ index.ts
 │  │  └─ utils/
 │  │     ├─ index.ts
-│  │     └─ utils.ts
+│  │     └─ cn.ts
 │  ├─ pages/
 │  │  ├─ index.tsx
 │  │  └─ not-found.tsx
@@ -112,7 +118,6 @@ Berikut struktur utama project (ringkas, sesuai repo ini):
 │  │  └─ index.ts
 │  ├─ App.tsx
 │  ├─ main.tsx
-│  ├─ router.tsx
 │  ├─ index.css
 │  └─ vite-env.d.ts
 ├─ test/
@@ -128,23 +133,23 @@ Berikut struktur utama project (ringkas, sesuai repo ini):
 └─ vite.config.ts
 ```
 
-### Keterangan Singkat
+### Quick Notes
 
-- `src/main.tsx`: entry React (mount ke `#root`) dan import CSS global.
-- `src/App.tsx`: routing utama (Home + 404) pakai `BrowserRouter`.
-- `src/router.tsx`: alternatif konfigurasi router via `createBrowserRouter` (belum dipakai oleh `src/main.tsx`).
-- `src/components/ui/*`: komponen UI reusable (contoh: `Button`).
-- `src/lib/utils/utils.ts`: helper `cn()` untuk merge class Tailwind (`clsx` + `tailwind-merge`).
-- `public/`: aset statis (ikon, font, gambar).
+- `src/main.tsx`: React entry point (mounts to `#root`) and imports global CSS.
+- `src/App.tsx`: active routing setup (Home + 404) using `BrowserRouter`.
+- `src/components/ui/*`: reusable UI components (for example: `Button`).
+- `src/lib/utils/cn.ts`: `cn()` helper for merging Tailwind classes (`clsx` + `tailwind-merge`).
+- `public/`: static assets (icons, fonts, images).
 
-## Alias Import
+## Import Alias
 
-Alias `@` mengarah ke folder `src` (lihat `vite.config.ts`). Untuk `shadcn/ui`, alias tambahan didefinisikan di `components.json` (mis. `@/components`, `@/lib`, `@/hooks`).
+The `@` alias points to the `src` directory (see `vite.config.ts`).  
+For `shadcn/ui`, additional aliases are defined in `components.json` (for example `@/components`, `@/lib`, `@/hooks`).
 
 ```ts
 import { Button } from '@/components/ui/button'
 ```
 
-## Catatan
+## Notes
 
-Beberapa folder/file masih berupa kerangka (sebagian masih kosong) seperti `docs/API.MD`, `providers/index.ts`, serta beberapa modul di `src/lib/*` dan `src/types/*`—silakan disesuaikan dengan kebutuhan proyek.
+Some folders/files are still scaffolded (partially or fully empty), such as `providers/index.ts` and several modules in `src/lib/*` and `src/types/*`. Adjust them based on your project needs.
