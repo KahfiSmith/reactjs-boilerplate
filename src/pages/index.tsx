@@ -24,6 +24,7 @@ export default function HomePage() {
                         <motion.a 
                             href="https://vite.dev" 
                             target="_blank"
+                            rel="noopener noreferrer"
                             className="relative group"
                             whileHover={{ scale: 1.1, rotate: 5 }}
                             transition={{ type: "spring", stiffness: 400, damping: 10 }}
@@ -34,6 +35,7 @@ export default function HomePage() {
                         <motion.a 
                             href="https://react.dev" 
                             target="_blank"
+                            rel="noopener noreferrer"
                             className="relative group"
                             whileHover={{ scale: 1.1, rotate: -5 }}
                             transition={{ type: "spring", stiffness: 400, damping: 10 }}
@@ -44,6 +46,7 @@ export default function HomePage() {
                         <motion.a 
                             href="https://github.com/KahfiSmith" 
                             target="_blank"
+                            rel="noopener noreferrer"
                             className="relative group"
                             whileHover={{ scale: 1.1, rotate: 5 }}
                             transition={{ type: "spring", stiffness: 400, damping: 10 }}
