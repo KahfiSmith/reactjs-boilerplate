@@ -1,10 +1,6 @@
 import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-
-type ErrorPageProps = {
-  message?: string;
-  onRetry?: () => void;
-};
+import { Button } from "@/components/ui";
+import type { ErrorPageProps } from "@/types";
 
 export default function ErrorPage({ message, onRetry }: ErrorPageProps) {
   return (
