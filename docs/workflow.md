@@ -1,52 +1,51 @@
 # Implementation Workflow (Reference Flow)
 
-This file is the default implementation workflow for this repository.
-Use this as the execution reference so changes stay consistent and avoid ad-hoc structure.
+Use this as the default implementation flow so the starter stays small, consistent, and easy to extend.
 
 ## Repository Context
 - This repo is a React + Vite frontend.
-- Active routing is in `src/App.tsx` (via `BrowserRouter`).
-- There is no built-in backend route layer in this repo. API work here means frontend API integration through `src/lib/api/*`.
+- Active routing is in `src/app/routes.tsx`.
+- `src/app/*` owns shell wiring only.
+- TanStack Query is the default server-state layer.
+- React Hook Form + Zod is the default form and validation stack.
+- API work here means frontend integration through `src/lib/api/*`.
 
 ## End-to-End Layer Flow (Data-Driven Feature)
-`external/backend API contract -> schema/types -> endpoint map -> HTTP client -> query function -> UI hook -> feature component -> page -> route registration`
-
-Concrete mapping:
-`src/types + src/lib/schemas -> src/lib/api/endpoints.ts -> src/lib/api/client.ts -> src/lib/api/queries.ts -> src/hooks/* -> src/components/features/* -> src/pages/* -> src/App.tsx`
+`external API contract -> src/lib/api/endpoints.ts -> src/lib/api/client.ts -> src/lib/api/queries.ts -> src/hooks/* -> src/components/features/* -> src/pages/* -> src/app/routes.tsx`
 
 ## End-to-End Layer Flow (UI-Only Feature)
-`page requirement -> feature component -> reusable UI primitives -> optional hook/helper -> route registration`
-
-Concrete mapping:
-`src/pages/* -> src/components/features/* -> src/components/ui/* -> src/hooks/* | src/lib/helpers/* -> src/App.tsx`
+`page requirement -> src/components/features/* -> src/components/ui/* -> optional src/hooks/* or src/lib/utils/* -> src/pages/* -> src/app/routes.tsx`
 
 ## Default Path Map
-- Route registration (active): `src/App.tsx`
+- App shell: `src/app/App.tsx`
+- Route registration: `src/app/routes.tsx`
+- App-wide wrappers: `src/app/providers.tsx`, `src/app/error-boundary.tsx`
+- Query client: `src/app/query-client.ts`
 - Route pages: `src/pages/<page>.tsx`
 - Feature components: `src/components/features/<feature>/*`
 - Reusable primitives: `src/components/ui/*`
 - API endpoint constants: `src/lib/api/endpoints.ts`
 - API transport client: `src/lib/api/client.ts`
-- API query functions: `src/lib/api/queries.ts`
+- API request functions: `src/lib/api/queries.ts`
 - API public exports: `src/lib/api/index.ts`
-- Validation schemas (when needed): `src/lib/schemas/<feature>.schema.ts` or `src/lib/schemas/<feature>.ts`
-- Shared contracts/DTO: `src/types/<feature>.ts` or `src/types/api.ts`
-- UI data hooks: `src/hooks/<feature>/*` or `src/hooks/use-<feature>.ts`
-- Auth boundary: `src/lib/auth/*`, `src/hooks/auth/*`, `providers/index.ts`
-- Config/env mapping: `src/config/*`, `.env.example` (if introduced), `.env.local` for local values
+- Query hooks: `src/hooks/*`
+- Generic utilities: `src/lib/utils/*`
+- Shared types when needed: `src/types/*`
+- Feature form schemas: keep close to the owning feature unless they are reused broadly
 
 ## Practical Steps
-1. Define or update request/response types first (`src/types/*`).
-2. Add/adjust schema validation if needed (`src/lib/schemas/*`).
-3. Define endpoint constants in `src/lib/api/endpoints.ts`.
-4. Implement transport handling in `src/lib/api/client.ts` if needed.
-5. Implement typed query function in `src/lib/api/queries.ts`.
-6. Add or update hook that consumes query functions (`src/hooks/*`).
-7. Build/compose feature UI in `src/components/features/*`.
-8. Reuse `src/components/ui/*` primitives before creating new ones.
-9. If component/widget becomes large, split into reusable child components.
-10. Mount/update page in `src/pages/*` and register route in active router (`src/App.tsx`).
-11. Verify and sync docs before handoff.
+1. Start in the page or feature that owns the user-facing behavior.
+2. If the page grows, move the use-case implementation into `src/components/features/*`.
+3. Reuse `src/components/ui/*` primitives before creating new ones.
+4. Keep generic helpers in `src/lib/utils/*`.
+5. For API work, define endpoints in `src/lib/api/endpoints.ts`.
+6. Implement transport behavior in `src/lib/api/client.ts`.
+7. Add typed request functions in `src/lib/api/queries.ts`.
+8. Wrap them in `src/hooks/*` with `useQuery` or `useMutation`.
+9. Consume those hooks from feature components or pages.
+10. For forms, model validation with `zod` and wire submission state through `react-hook-form`.
+11. Register routes in `src/app/routes.tsx`.
+12. Verify and sync docs before handoff.
 
 ## Verification
 Run for source code changes:
@@ -67,14 +66,15 @@ pnpm test
 
 ## Documentation Sync
 - API behavior changed: update `docs/api.md`
-- Architecture/path policy changed: update `docs/architecture.md`
-- Coding convention changed: update `docs/coding-standards.md`
-- Implementation pattern changed: update `docs/patterns.md`
-- Rule/policy changed: update `docs/rules.md`
-- Workflow changed: update this file (`docs/workflow.md`)
+- Architecture or folder strategy changed: update `docs/architecture.md`
+- Coding conventions changed: update `docs/coding-standards.md`
+- Implementation recipes changed: update `docs/patterns.md`
+- Rules or policy changed: update `docs/rules.md`
+- Workflow changed: update this file
 
 ## Guardrails
 - Keep one active routing source-of-truth.
-- Do not add direct `fetch` calls in pages/components for domain data.
-- Do not bypass reusable UI layer when composing repeated visual blocks.
+- Do not add placeholder top-level modules with empty `.ts` files.
+- Do not call `fetch` directly from pages/components for domain data.
+- Do not move types into `src/types/*` unless they are actually shared.
 - Keep changes scoped and avoid unrelated refactors.

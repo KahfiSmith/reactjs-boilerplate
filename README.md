@@ -1,155 +1,209 @@
 # Reactjs Boilerplate
 
-A frontend boilerplate built with React + TypeScript + Vite, including Tailwind CSS v4 and React Router.
+Lean frontend boilerplate for React + TypeScript + Vite with Tailwind CSS v4, React Router v7, TanStack Query, React Hook Form, Zod, Framer Motion, and a shadcn-style UI layer.
 
-## Stack & Packages
+## Overview
 
-**Core**
-- `react`, `react-dom`
-- `vite`, `@vitejs/plugin-react`, `typescript`
+This starter is organized around a small set of real boundaries:
 
-**Styling**
-- `tailwindcss` (v4) + `@tailwindcss/vite`
-- `postcss`, `autoprefixer`
-- className utilities: `clsx`, `tailwind-merge`
-- animation utility: `tw-animate-css`
+- `src/app`: app shell, providers, router, query client, error boundary
+- `src/pages`: route-level pages
+- `src/components/features`: feature composition
+- `src/components/ui`: reusable visual primitives
+- `src/lib/api`: API client, endpoints, and request helpers
+- `src/hooks`: shared reusable hooks, including TanStack Query hooks
+- `src/lib/utils`: shared low-level utilities
+- `src/types`: shared contracts reused across app and API boundaries
 
-**Routing**
-- `react-router-dom`
+Current runtime behavior:
 
-**UI**
-- `shadcn/ui` config via `components.json` (component output: `src/components/ui`)
-- `@radix-ui/react-slot` (Slot)
-- `class-variance-authority` (variants)
+- bootstrap starts in `src/main.tsx`
+- app shell lives in `src/app/App.tsx`
+- active route source-of-truth is `src/app/routes.tsx`
+- TanStack Query is provided from `src/app/providers.tsx`
+- the shared query client lives in `src/app/query-client.ts`
+- routing uses `BrowserRouter` + `Routes`
+- pages are lazy-loaded with `Suspense`
+- loading fallback uses `src/pages/loading.tsx`
+- render errors fall back through `src/app/error-boundary.tsx`
 
-**Animation & Icons**
-- `framer-motion`
-- `lucide-react`
+## Project Docs
 
-**Lint**
-- `eslint` + `typescript-eslint`
-- `eslint-plugin-react-hooks`, `eslint-plugin-react-refresh`
+- `docs/rules.md`
+- `docs/workflow.md`
+- `docs/architecture.md`
+- `docs/coding-standards.md`
+- `docs/patterns.md`
+- `docs/api.md`
+
+If documentation conflicts with runtime, follow `src/main.tsx`, `src/app/App.tsx`, and `src/app/routes.tsx`.
 
 ## Prerequisites
 
-- Node.js (LTS recommended)
+- Node.js LTS
 - `pnpm`
 
-## Run
+## Commands
 
 ```bash
 pnpm install
 pnpm dev
-```
-
-Other commands:
-
-```bash
+pnpm lint
 pnpm type-check
 pnpm build
 pnpm preview
-pnpm lint
 ```
 
-## Folder Structure
+Notes:
 
-Main project structure (condensed, based on this repository):
+- `pnpm build` runs `tsc -b && vite build`
+- there is currently no `pnpm test` script
+- a test scaffold exists at `test/setup.ts`
+
+## Current Routing
+
+Routes are declared in `src/app/routes.tsx`:
+
+- `/` -> `src/pages/index.tsx`
+- `*` -> `src/pages/not-found.tsx`
+
+Shell fallbacks:
+
+- loading -> `src/pages/loading.tsx`
+- render error -> `src/pages/error.tsx`
+
+## Directory Guide
 
 ```text
 .
 ├─ docs/
-│  ├─ api.md
-│  ├─ architecture.md
-│  ├─ coding-standards.md
-│  ├─ patterns.md
-│  ├─ rules.md
-│  └─ workflow.md
-├─ providers/
-│  └─ index.ts
 ├─ public/
 │  ├─ fonts/
-│  │  ├─ Satoshi-Variable.ttf
-│  │  └─ Satoshi-VariableItalic.ttf
 │  ├─ icons/
-│  │  ├─ react.svg
-│  │  └─ vite.svg
-│  ├─ images/
-│  │  └─ waifu.jpeg
-│  └─ vite.svg
+│  └─ images/
 ├─ src/
+│  ├─ app/
+│  │  ├─ App.tsx
+│  │  ├─ error-boundary.tsx
+│  │  ├─ providers.tsx
+│  │  ├─ query-client.ts
+│  │  └─ routes.tsx
 │  ├─ components/
-│  │  ├─ common/
-│  │  │  └─ index.ts
 │  │  ├─ features/
-│  │  │  └─ index.ts
-│  │  ├─ layout/
-│  │  │  └─ index.ts
+│  │  │  └─ home/
 │  │  └─ ui/
-│  │     └─ button.tsx
-│  ├─ config/
-│  │  └─ index.ts
 │  ├─ hooks/
-│  │  ├─ auth/
-│  │  └─ index.ts
 │  ├─ lib/
 │  │  ├─ api/
-│  │  │  ├─ client.ts
-│  │  │  ├─ endpoints.ts
-│  │  │  ├─ index.ts
-│  │  │  └─ queries.ts
-│  │  ├─ auth/
-│  │  │  └─ index.ts
-│  │  ├─ helpers/
-│  │  │  └─ index.ts
-│  │  ├─ schemas/
-│  │  │  └─ index.ts
 │  │  └─ utils/
-│  │     ├─ index.ts
-│  │     └─ cn.ts
 │  ├─ pages/
-│  │  ├─ index.tsx
-│  │  └─ not-found.tsx
-│  ├─ store/
-│  │  └─ index.ts
 │  ├─ types/
-│  │  ├─ api.ts
-│  │  ├─ auth.ts
-│  │  ├─ common.ts
-│  │  └─ index.ts
-│  ├─ App.tsx
-│  ├─ main.tsx
 │  ├─ index.css
-│  └─ vite-env.d.ts
+│  └─ main.tsx
 ├─ test/
 │  └─ setup.ts
 ├─ components.json
 ├─ eslint.config.js
-├─ index.html
 ├─ package.json
-├─ pnpm-lock.yaml
-├─ tsconfig.app.json
 ├─ tsconfig.json
-├─ tsconfig.node.json
 └─ vite.config.ts
 ```
 
-### Quick Notes
+## Layer Responsibilities
 
-- `src/main.tsx`: React entry point (mounts to `#root`) and imports global CSS.
-- `src/App.tsx`: active routing setup (Home + 404) using `BrowserRouter`.
-- `src/components/ui/*`: reusable UI components (for example: `Button`).
-- `src/lib/utils/cn.ts`: `cn()` helper for merging Tailwind classes (`clsx` + `tailwind-merge`).
-- `public/`: static assets (icons, fonts, images).
+- `src/app/*`: app-wide shell concerns, route registration, and provider setup
+- `src/pages/*`: route-level composition only
+- `src/components/features/*`: feature-specific UI composition
+- `src/components/ui/*`: reusable presentational primitives
+- `src/lib/api/*`: transport, endpoint definitions, and request helpers
+- `src/hooks/*`: reusable hooks, especially TanStack Query hooks that consume `src/lib/api/*`
+- `src/lib/utils/*`: generic utilities such as `cn()`
+- `src/types/*`: optional shared types when they are reused across layers
+
+Preferred dependency direction:
+
+`app -> pages -> components/features -> hooks -> lib -> types`
+
+Practical rule:
+
+- keep API request details in `src/lib/api/*`
+- keep `useQuery` and `useMutation` wrappers in `src/hooks/*`
+- keep pages thin and render feature components
+
+## TanStack Query Pattern
+
+Recommended data flow:
+
+1. define endpoint builders in `src/lib/api/endpoints.ts`
+2. define request functions in `src/lib/api/queries.ts`
+3. wrap them with `useQuery` or `useMutation` in `src/hooks/*`
+4. consume those hooks inside feature components or pages
+
+Example files:
+
+- `src/app/query-client.ts`
+- `src/app/providers.tsx`
+- `src/hooks/use-app-status.ts`
+
+## Forms and Validation
+
+- `react-hook-form` is the default form-state library.
+- `zod` is the default schema and validation library.
+- Keep form schemas close to the owning feature unless they are reused broadly.
+- Promote request and response contracts into `src/types/*` only when they cross multiple boundaries.
+
+## Styling
+
+- Tailwind CSS v4 is enabled through `@tailwindcss/vite`
+- global styles and CSS variables live in `src/index.css`
+- use `cn()` from `src/lib/utils`
+- reuse `src/components/ui/*` before creating new primitives
 
 ## Import Alias
 
-The `@` alias points to the `src` directory (see `vite.config.ts`).  
-For `shadcn/ui`, additional aliases are defined in `components.json` (for example `@/components`, `@/lib`, `@/hooks`).
+The `@` alias maps to `src`.
+
+Example:
 
 ```ts
-import { Button } from '@/components/ui/button'
+import { Button } from "@/components/ui";
 ```
+
+## API Structure
+
+`src/lib/api` contains the boilerplate API surface:
+
+- `client.ts`: generic `fetch` wrapper with JSON handling and normalized errors
+- `endpoints.ts`: endpoint map and path builders
+- `queries.ts`: reusable request helpers and feature-facing query functions
+- `index.ts`: public exports
+
+`VITE_API_BASE_URL` is supported as an optional base URL for API requests.
+
+Current shared contracts live in `src/types/*`, including:
+
+- `ApiRequestOptions`
+- `AppStatusResponse`
+- `WithChildren`
+- `ErrorPageProps`
+
+## Verification
+
+For source changes, run:
+
+```bash
+pnpm lint
+pnpm type-check
+pnpm build
+```
+
+For UI or API changes, also manually verify:
+
+- one happy path
+- one error or empty path
 
 ## Notes
 
-Some folders/files are still scaffolded (partially or fully empty), such as `providers/index.ts` and several modules in `src/lib/*` and `src/types/*`. Adjust them based on your project needs.
+- placeholder directories should use `.gitkeep`, not empty `.ts` files
+- keep route declarations in `src/app/routes.tsx`
+- add new top-level structure only when it has real code behind it

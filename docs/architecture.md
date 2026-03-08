@@ -1,74 +1,90 @@
 # Architecture
 
 ## Goal
-Keep the codebase predictable and scalable through strict layering, clear dependency direction, and one active routing approach.
+Keep the boilerplate small, predictable, and easy to extend without carrying placeholder layers that do not have real behavior yet.
 
 ## Runtime Flow
-1. `src/main.tsx` bootstraps React, imports global styles, and renders `App`.
-2. `src/App.tsx` defines active routes via `BrowserRouter`.
-3. Route pages in `src/pages/*` compose features and primitives.
+1. `src/main.tsx` bootstraps React and imports global styles.
+2. `src/app/App.tsx` composes the app shell.
+3. `src/app/providers.tsx` wires shared app providers, including TanStack Query.
+4. `src/app/routes.tsx` defines active routes via `BrowserRouter`.
+5. `src/pages/*` compose feature and UI layers.
 
 Current route source-of-truth:
-- `src/App.tsx` is active.
+- `src/app/routes.tsx`
 
 ## High-Level Structure
-- `src/pages/*`: route-level pages and page composition
-- `src/components/features/*`: domain/use-case UI composition
+- `src/app/*`: app shell, query client, providers, error boundary, router
+- `src/pages/*`: route-level pages
+- `src/components/features/*`: use-case composition
 - `src/components/ui/*`: reusable presentational primitives
-- `src/hooks/*`: reusable interaction and state logic
-- `src/lib/api/*`: endpoint constants, API client, and typed queries
-- `src/lib/helpers/*`, `src/lib/utils/*`: pure helpers and utility functions
-- `src/lib/schemas/*`: parsing/validation schemas when required
-- `src/lib/auth/*`: authentication helpers and auth-related boundaries
-- `src/types/*`: shared contracts and type definitions
-- `providers/index.ts`: provider composition boundary
+- `src/hooks/*`: reusable hooks, especially data hooks built on TanStack Query
+- `src/lib/api/*`: API client, endpoints, and request helpers
+- `src/lib/utils/*`: low-level shared utilities
+- `src/types/*`: shared contracts reused across app or API layers
 
 ## Layer Responsibilities
+- App layer:
+  - owns route registration and app-wide wrappers
+  - owns provider setup such as `QueryClientProvider`
+  - should stay thin and predictable
 - Page layer:
   - owns route-level orchestration
-  - should not contain raw transport logic
+  - should not contain large feature implementation details
 - Feature layer:
-  - owns use-case specific UI composition
-  - can consume hooks and lib modules
+  - owns domain/use-case UI composition
+  - can consume hooks and UI primitives
+- Hook layer:
+  - owns reusable `useQuery` and `useMutation` wrappers
+  - should call into `src/lib/api/*`, not raw `fetch`
+- Type layer:
+  - owns shared contracts such as request options, shared API responses, and common prop shapes
+  - should stay small and should not become a dumping ground for feature-local types
 - UI primitive layer:
   - owns reusable presentational components
-  - should not depend on route-level or domain-specific modules
-- Library layer:
-  - owns integration logic, utility functions, and data contracts
+  - should not import route- or feature-specific modules
+- Lib layer:
+  - owns transport and generic helper logic
   - should remain framework-light where practical
 
 ## Dependency Direction
 Preferred direction:
-`pages -> components/features -> hooks -> lib/api|lib/helpers|lib/utils -> types`
+`app -> pages -> components/features -> hooks -> lib -> types`
 
 Additional rules:
 - `components/ui` can be used by pages/features, but should not import from them.
-- All layers may import from `src/types`.
-- Avoid circular dependencies, especially through broad barrel re-exports.
+- `hooks/*` should consume `src/lib/api/*` for domain data access.
+- `react-hook-form` + `zod` is the default form boundary when forms are added.
+- Keep types close to a feature until they are truly shared.
+- Avoid circular dependencies and broad barrel re-export chains.
 
 ## Routing Strategy
-- Keep route declarations in one active approach at a time.
-- Maintain wildcard fallback route (`*`) for not-found behavior.
+- Keep route declarations in one active place only.
+- Current active place: `src/app/routes.tsx`.
+- Preserve wildcard fallback route (`*`) for not-found behavior.
 
 ## State and Data Strategy
 - Prefer local state for local behavior.
-- Extract shared behavior into hooks only when reuse is clear.
+- Use TanStack Query for server-state caching and request lifecycle handling.
+- Use React Hook Form for client-side form state and Zod for schema validation.
 - Keep API call details in `src/lib/api/*`.
-- Keep pages/components focused on rendering and interaction.
+- Keep pages focused on composition, not transport logic.
 
-## Component Scalability Strategy
-- If a widget or page component becomes large, split it into reusable child components.
-- Promote generic visuals into `src/components/ui/*`.
-- Keep use-case specific pieces in `src/components/features/*`.
+## Scalability Strategy
+- If a page grows large, move the use-case implementation into `src/components/features/*`.
+- If data fetching logic is reused, move it into `src/hooks/*`.
+- If a visual pattern becomes reusable, move it to `src/components/ui/*`.
+- Add new top-level folders only when they contain real, maintained behavior.
 
 ## Styling Strategy
 - Tailwind utilities first.
 - Reuse design tokens and CSS variables from `src/index.css`.
 - Reuse UI primitives before creating one-off styling patterns.
-- Ensure responsive behavior in mobile and desktop breakpoints.
+- Ensure responsive behavior across mobile and desktop.
 
 ## Architecture Change Checklist
-- Is the active routing source-of-truth still clear and single?
-- Are dependency boundaries still respected?
-- Is large JSX decomposed into reusable components where needed?
-- Are docs updated (`docs/architecture.md`, `docs/patterns.md`) after boundary changes?
+- Is the route source-of-truth still single and obvious?
+- Is `src/app/*` thin and focused on shell concerns?
+- Are query hooks separated from raw API request helpers?
+- Are large page implementations extracted into `components/features/*`?
+- Are new top-level folders justified by real code, not anticipation?
