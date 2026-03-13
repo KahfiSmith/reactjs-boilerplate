@@ -17,6 +17,13 @@ This document applies to:
 - UI code should not bypass the API layer with direct `fetch` calls for domain data.
 - Shared API contracts currently live in `src/types/api.ts`.
 
+Current implemented example surface:
+- endpoint: `apiEndpoints.appStatus`
+- request helper: `getAppStatus()`
+- hook: `useAppStatus()`
+- shared response type: `AppStatusResponse`
+- status: available as an example integration path, but not yet consumed by the starter route UI
+
 ## API Module Contract
 - `src/lib/api/endpoints.ts`
   - stores endpoint constants and path builders
@@ -53,6 +60,24 @@ export const apiEndpoints = {
 - Do not include UI behavior such as toasts or redirects.
 - Current request option contract is `ApiRequestOptions`.
 
+Current client behavior:
+- Base URL resolution order is:
+  1. `options.baseUrl`
+  2. `import.meta.env.VITE_API_BASE_URL`
+  3. `window.location.origin`
+- Absolute `http` paths bypass base URL joining.
+- Query values are appended through `URLSearchParams`, skipping `null` and `undefined`.
+- `BodyInit` values are passed through unchanged.
+- Plain object bodies are serialized as JSON and receive `Content-Type: application/json` when absent.
+- Response parsing rules:
+  - `204` -> `null`
+  - `content-type` includes `application/json` -> `response.json()`
+  - otherwise -> `response.text()`
+- Error normalization rules:
+  - throw `ApiError`
+  - use `response.message` when the parsed payload exposes a string `message`
+  - otherwise fall back to `Request failed with status <code>`
+
 Suggested error shape:
 ```ts
 export class ApiError extends Error {
@@ -66,6 +91,11 @@ export class ApiError extends Error {
 - Keep signatures typed and explicit.
 - These functions should be framework-agnostic and reusable from hooks.
 - Current shared example response contract is `AppStatusResponse`.
+
+Current helper split:
+- `getQuery<TResponse>()` is the generic GET wrapper.
+- `postQuery<TResponse, TBody>()` is the generic POST wrapper.
+- `getAppStatus()` is the only feature-facing query helper currently defined.
 
 Example:
 ```ts
@@ -94,6 +124,12 @@ export function getAppStatus() {
 - request helper: `getAppStatus()`
 - query hook: `useAppStatus()`
 - shared response type: `AppStatusResponse`
+
+Current shared type surface in `src/types/api.ts`:
+- `QueryValue`
+- `ApiRequestBody`
+- `ApiRequestOptions`
+- `AppStatusResponse`
 
 ## Security and Reliability
 - Never log secrets, tokens, or sensitive payload values.

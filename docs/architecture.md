@@ -13,6 +13,12 @@ Keep the boilerplate small, predictable, and easy to extend without carrying pla
 Current route source-of-truth:
 - `src/app/routes.tsx`
 
+Current runtime composition:
+- `src/main.tsx` renders `<App />` inside `React.StrictMode`.
+- `src/app/App.tsx` wraps the tree with `ErrorBoundary`, then `AppProviders`, then `AppRoutes`.
+- `src/app/providers.tsx` currently provides only `QueryClientProvider`.
+- `src/app/routes.tsx` owns `BrowserRouter`, `Suspense`, and the route table.
+
 ## High-Level Structure
 - `src/app/*`: app shell, query client, providers, error boundary, router
 - `src/pages/*`: route-level pages
@@ -63,6 +69,12 @@ Additional rules:
 - Current active place: `src/app/routes.tsx`.
 - Preserve wildcard fallback route (`*`) for not-found behavior.
 
+Current route table:
+- `/` -> `src/pages/index.tsx`
+- `*` -> `src/pages/not-found.tsx`
+- Suspense fallback -> `src/pages/loading.tsx`
+- Render failures -> `src/pages/error.tsx` through `src/app/error-boundary.tsx`
+
 ## State and Data Strategy
 - Prefer local state for local behavior.
 - Use TanStack Query for server-state caching and request lifecycle handling.
@@ -81,6 +93,23 @@ Additional rules:
 - Reuse design tokens and CSS variables from `src/index.css`.
 - Reuse UI primitives before creating one-off styling patterns.
 - Ensure responsive behavior across mobile and desktop.
+
+## Current Starter Surface
+- `src/pages/index.tsx` is intentionally thin and renders `HomeHero`.
+- `src/components/features/home/home-hero.tsx` is the current starter feature:
+  - animated landing hero
+  - local counter state example
+  - links to React, Vite, and the maintainer GitHub profile
+- `src/components/ui/button.tsx` and `src/components/ui/loader.tsx` are the only reusable UI primitives currently exposed from `src/components/ui/index.ts`.
+
+## Provider and Boundary Details
+- `src/app/query-client.ts` configures a shared `QueryClient` with:
+  - `staleTime: 60_000`
+  - `gcTime: 5 * 60_000`
+  - `refetchOnWindowFocus: false`
+  - query `retry: 1`
+  - mutation `retry: 0`
+- `src/app/error-boundary.tsx` catches render errors, logs them with `console.error`, and renders `ErrorPage` with an optional retry action.
 
 ## Architecture Change Checklist
 - Is the route source-of-truth still single and obvious?

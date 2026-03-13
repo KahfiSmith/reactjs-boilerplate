@@ -11,6 +11,13 @@ Use this composition model:
 4. API helper handles transport and endpoint details.
 5. UI primitive handles reusable presentation.
 
+Current repo example:
+1. `src/pages/index.tsx` stays thin.
+2. It renders `HomeHero` from `src/components/features/home/home-hero.tsx`.
+3. `useAppStatus()` demonstrates the query-hook layer, even though it is not yet wired into the home page.
+4. `getAppStatus()` and `apiClient()` show the API helper split.
+5. `Button` and `Loader` are the currently exported primitives.
+
 ## Container + Presentation Pattern
 - Container components: data fetching, state, handlers.
 - Presentation components: typed props, rendering only.
@@ -88,6 +95,14 @@ Current example in this repo:
 - `src/hooks/use-app-status.ts` defines the query wrapper
 - `src/lib/api/queries.ts` defines `getAppStatus`
 - `src/types/api.ts` owns `AppStatusResponse`
+- `src/pages/loading.tsx` is the route suspense fallback
+- `src/pages/error.tsx` is the render-failure fallback used by `ErrorBoundary`
+- `src/pages/not-found.tsx` is the explicit wildcard route fallback
+
+Applied fallback pattern:
+- route loading -> `Suspense` in `src/app/routes.tsx`
+- render crash -> `ErrorBoundary` in `src/app/App.tsx`
+- unknown route -> wildcard route in `src/app/routes.tsx`
 
 ## Route Growth Pattern
 When adding a new route:
