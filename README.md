@@ -1,6 +1,6 @@
 # Reactjs Boilerplate
 
-Lean frontend boilerplate for building React applications with Vite, TypeScript, Tailwind CSS v4, React Router v7, TanStack Query, React Hook Form, Zod, Framer Motion, and a shadcn-style UI layer.
+Lean frontend boilerplate for building React applications with Vite, TypeScript, Tailwind CSS v4, React Router v7, TanStack Query, React Hook Form, Zod, Axios, Framer Motion, and a shadcn-style UI layer.
 
 ## Overview
 
@@ -34,6 +34,7 @@ Current runtime behavior:
 
 - `react-router-dom` 7
 - `@tanstack/react-query` 5
+- `axios`
 
 ### Forms and Validation
 
@@ -205,7 +206,7 @@ Recommended data flow:
 3. Wrap requests in `src/hooks/*` with TanStack Query
 4. Consume hooks inside feature components or pages
 
-The low-level fetch wrapper lives in `src/lib/api/client.ts`.
+`axios` is installed in the repository, but the current low-level HTTP client in `src/lib/api/client.ts` still wraps `fetch`. Keep domain requests flowing through that shared API layer until the transport is intentionally migrated.
 
 ## Documentation Map
 
@@ -224,6 +225,5 @@ If documentation conflicts with runtime, follow `src/main.tsx`, `src/app/App.tsx
 
 - Keep route declarations in `src/app/routes.tsx`
 - Reuse `src/components/ui/*` before creating new primitives
-- Do not call raw `fetch` from pages or feature components for domain data
+- Do not call raw `fetch` or `axios` from pages or feature components for domain data
 - Use `.gitkeep` for placeholder directories instead of empty `.ts` or `.tsx` files
-

@@ -13,8 +13,9 @@ This document applies to:
 - This repository is a frontend boilerplate.
 - The active API surface lives in `src/lib/api/*`.
 - TanStack Query is the default server-state layer.
+- `axios` is installed as an available HTTP dependency.
 - `VITE_API_BASE_URL` is supported as an optional API base URL.
-- UI code should not bypass the API layer with direct `fetch` calls for domain data.
+- UI code should not bypass the API layer with direct `fetch` or `axios` calls for domain data.
 - Shared API contracts currently live in `src/types/api.ts`.
 
 Current implemented example surface:
@@ -31,6 +32,7 @@ Current implemented example surface:
 - `src/lib/api/client.ts`
   - low-level HTTP wrapper
   - request defaults, JSON handling, error normalization
+  - current transport implementation uses `fetch`, even though `axios` is installed
 - `src/lib/api/queries.ts`
   - reusable request helpers and feature-facing API functions
 - `src/lib/api/index.ts`
@@ -59,6 +61,10 @@ export const apiEndpoints = {
 - Normalize non-2xx responses to one error shape.
 - Do not include UI behavior such as toasts or redirects.
 - Current request option contract is `ApiRequestOptions`.
+
+Transport note:
+- `axios` is available in `package.json`, but `src/lib/api/client.ts` currently wraps the browser `fetch` API.
+- Do not mix direct `axios` calls into pages, features, or hooks while the shared client remains fetch-based.
 
 Current client behavior:
 - Base URL resolution order is:
@@ -108,7 +114,7 @@ export function getAppStatus() {
 - Build `useQuery` and `useMutation` wrappers in `src/hooks/*`.
 - Query hooks should call request functions from `src/lib/api/*`.
 - Keep query keys stable and explicit.
-- Do not call raw `fetch` directly inside query hooks for domain requests.
+- Do not call raw `fetch` or `axios` directly inside query hooks for domain requests.
 
 ## Request Lifecycle
 1. Add or update endpoint builders in `endpoints.ts`.
@@ -141,6 +147,6 @@ Current shared type surface in `src/types/api.ts`:
 ## Verification Checklist
 - Endpoint constant or path builder exists in `endpoints.ts`.
 - Request and response types are explicit where they matter.
-- Query hook consumes a typed API function rather than raw `fetch`.
+- Query hook consumes a typed API function rather than raw `fetch` or `axios`.
 - Error path is tested manually for at least one non-2xx scenario.
 - Docs are synchronized when the API contract or structure changed.

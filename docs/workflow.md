@@ -75,6 +75,6 @@ pnpm test
 ## Guardrails
 - Keep one active routing source-of-truth.
 - Do not add placeholder top-level modules with empty `.ts` files.
-- Do not call `fetch` directly from pages/components for domain data.
+- Do not call `fetch` or `axios` directly from pages/components for domain data.
 - Do not move types into `src/types/*` unless they are actually shared.
 - Keep changes scoped and avoid unrelated refactors.

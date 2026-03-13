@@ -42,7 +42,7 @@ Current runtime composition:
   - can consume hooks and UI primitives
 - Hook layer:
   - owns reusable `useQuery` and `useMutation` wrappers
-  - should call into `src/lib/api/*`, not raw `fetch`
+  - should call into `src/lib/api/*`, not raw `fetch` or `axios`
 - Type layer:
   - owns shared contracts such as request options, shared API responses, and common prop shapes
   - should stay small and should not become a dumping ground for feature-local types
@@ -80,6 +80,7 @@ Current route table:
 - Use TanStack Query for server-state caching and request lifecycle handling.
 - Use React Hook Form for client-side form state and Zod for schema validation.
 - Keep API call details in `src/lib/api/*`.
+- `axios` is installed, but the current shared transport in `src/lib/api/client.ts` still uses `fetch`.
 - Keep pages focused on composition, not transport logic.
 
 ## Scalability Strategy
